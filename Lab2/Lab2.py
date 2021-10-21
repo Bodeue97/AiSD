@@ -1,6 +1,6 @@
 from typing import Any
 
-import int as Int
+
 
 
 class Node:
@@ -12,11 +12,20 @@ class Node:
 class LinkedList:
     def __init__(self, node=None):
         self.head = node
-
+        self.tail = node
     def push(self, value: Any):
         node = Node(value)
         node.next = self.head
         self.head = node
+        self.tail = node.next
+
+    def __len__(self):
+        node = self.head
+        count = 0
+        while node != None:
+            count += 1
+            node = node.next
+        return count
 
     def __str__(self):
         strng = ""
@@ -29,33 +38,29 @@ class LinkedList:
             node = node.next
         return strng
 
-    def node(self, at: Int):
-        if len(self) >= at:
+    def node(self, at: int):
+        if at < 0:
+            raise ValueError("podano indeks < 0")
+
+        if len(self) > at:
             node = self.head
             for x in range(at):
                 node = node.next
-            return node
-
-    def __len__(self):
-        node = self.head
-        count = 0
-        while node != None:
-            count += 1
-            node = node.next
-        return count
+        else:
+            raise ValueError("Podano indeks spoza listy")
+        return node
 
     def append(self, value: Any):
         node = Node(value)
         if self.head == None:
             self.head = node
         else:
-            node2 = self.head
-            while node2.next != None:
-                node2 = node2.next
+            self.tail.next = node
 
-            node2.next = node
 
     def insert(self, value: Any, after: Node):
+
+
         if after == None:
             raise ValueError("Podano wezel spoza listy")
             return
@@ -66,7 +71,7 @@ class LinkedList:
     def remove(self, after: Node):
         if after != None:
             if after.next == None:
-                raise ValueError("probujesz usunac node z konca, uzyj remove_last()")
+                raise ValueError("probujesz usunac node spoza listy")
                 return
         if after == None:
             raise ValueError("probujesz usunac node spoza listy")
@@ -75,7 +80,9 @@ class LinkedList:
         while node != after:
             node = node.next
         node = node.next
+        node2 = node
         after.next = node.next
+        return node2
 
     def pop(self):
         node = self.head
@@ -83,20 +90,18 @@ class LinkedList:
         return node
 
     def remove_last(self):
-        node = self.head
-        for x in range(len(self) - 2):
-            node = node.next
-        node2 = node.next
-        node.next = None
-        return node2
+        node = self.tail.next
+        self.tail.next = None
+
+        return node
 
 class Stack:
     def __init__(self):
-       self.head = None
+       self._storage = None
 
     def __len__(self):
         count = 0
-        node = self.head
+        node = self._storage
 
         while node != None:
             node = node.next
@@ -106,17 +111,17 @@ class Stack:
 
     def push(self, element:Any):
         node = Node(element)
-        if self.head == None:
-            self.head = node
+        if self._storage == None:
+            self._storage = node
         else:
-            node2 = self.head
+            node2 = self._storage
             while node2.next != None:
                 node2 = node2.next
 
             node2.next = node
 
     def pop(self):
-        node = self.head
+        node = self._storage
         for x in range(len(self) - 2):
             node = node.next
         node2 = node.next
@@ -126,7 +131,7 @@ class Stack:
 
     def __str__(self):
         strng = ""
-        node = self.head
+        node = self._storage
         tab = []
         while (node != None):
             tab.append(node.value)
@@ -137,27 +142,27 @@ class Stack:
 
 class Queue:
     def __init__(self):
-        self.head = None
+        self._storage = None
 
     def peek(self):
 
-        return self.head
+        return self._storage
 
     def enqueue(self, element:Any):
         node = Node(element)
-        if self.head == None:
-            self.head = node
+        if self._storage == None:
+            self._storage = node
         else:
-            node2 = self.head
+            node2 = self._storage
             while node2.next != None:
                 node2 = node2.next
             node2.next = node
     def dequeue(self):
-        node = self.head
-        self.head = node.next
+        node = self._storage
+        self._storage = node.next
         return node
     def __str__(self):
-        node = self.head
+        node = self._storage
         strng = ""
         while node != None:
             strng+=node.value+" "
@@ -165,7 +170,7 @@ class Queue:
         return strng
     def __len__(self):
         count = 0
-        node = self.head
+        node = self._storage
 
         while node != None:
             node = node.next
@@ -176,49 +181,13 @@ class Queue:
 
 
 
-# list_ = LinkedList()
-# list_.head == None
-# list_.push(4)
-# list_.push(3)
-# list_.push(2)
-# list_.push(1)
-# list_.append(5)
-# list_.insert(666, list_.node(3))
-# list_.insert(666, list_.node(332))
-# list_.pop()
-# print(list_.remove_last().value)
-# list_.remove(list_.node(0))
-# print(list_)
-# print(len(list_))
+lista = LinkedList()
+lista.push(3)
+lista.push(5)
+lista.append(10)
+lista.insert(60, lista.node(0))
+print(lista.remove(lista.node(1)).value)
 
 
-#
-# stack = Stack()
-#
-# stack.push(1)
-# stack.push(2)
-# stack.push(3)
-# stack.push(4)
-# stack.push(5)
-#
-#
-# print(stack)
-# print(stack.pop().value,"\n")
-# print(stack)
-# print(len(stack))
 
-#
-#
-queue = Queue()
-queue.enqueue("Andrzej")
-queue.enqueue("Bartek")
-queue.enqueue("Cecyl")
-queue.enqueue("Dariusz")
-queue.enqueue("Eugeniusz")
-queue.enqueue("Fryderyk")
-print(len(queue))
-print(queue.peek().value)
-queue.dequeue()
-print(queue.peek().value)
-print(len(queue))
-print(queue)
+print(lista)
