@@ -1,185 +1,175 @@
 from typing import Any
 
-import int as Int
+
 
 
 class Node:
-    def __init__(self, value):
+    def __init__(self, value:Any):
         self.value = value
         self.next = None
 
-
 class LinkedList:
-    def __init__(self, node=None):
-        self.head = node
-
-    def add(self, value: Any):
-        node = Node(value)
-        node.next = self.head
-        self.head = node
-
-    def travel(self):
+    def __init__(self):
+        self.head = None
+        self.tail = None
+    def __len__(self):
         node = self.head
+        count = 0
         while node != None:
-            print(node.value, end='')
+            count += 1
             node = node.next
+        return count
 
-    def node(self, at: Int):
-        if self.length() >= at:
+    def __str__(self):
+        strng = ""
+        node = self.head
+        for x in range(len(self)):
+            if node.next != None:
+                strng+=str(node.value)+" -> "
+            if node.next == None:
+                strng+=str(node.value)
+            node = node.next
+        return strng
+
+    def push(self, value: Any):
+        if self.head == None:
+            node = Node(value)
+            self.head = node
+            self.tail = node
+        else:
+            node = Node(value)
+            node.next = self.head
+            self.head = node
+
+    def append(self, value: Any):
+        if self.head != None:
+            node = self.tail
+            node.next = Node(value)
+            self.tail = node.next
+        else:
+            self.push(value)
+
+    def node(self, at: int):
+        if len(self) == 0:
+            raise ValueError("lista jest pusta")
+        if at < 0:
+            raise ValueError("Podano indeks < 0 ")
+        if at > len(self)-1:
+            raise ValueError("Podano indeks spoza listy")
+        if at == len(self)-1:
+            node = self.tail
+        if len(self) > at:
             node = self.head
             for x in range(at):
                 node = node.next
-            return node
-
-    def length(self):
-        cur = self.head
-        count = 0
-        while cur != None:
-            count += 1
-            cur = cur.next
-        return count
-
-    def append(self, value: Any):
-        node = Node(value)
-        if self.head == None:
-            self.head = node
-        else:
-            node2 = self.head
-            while node2.next != None:
-                node2 = node2.next
-
-            node2.next = node
+        return node
 
     def insert(self, value: Any, after: Node):
+
+        if after == self.tail:
+            self.append(value)
+            return
         if after == None:
-            print("Podano wezel spoza listy")
+            raise ValueError("Podany wezel nie istnieje")
             return
         node = Node(value)
         node.next = after.next
         after.next = node
 
-    def remove(self, after: Node):
-        if after != None:
-            if after.next == None:
-                print("probujesz usunac node z konca")
-                return
-        if after == None:
-            print("probujesz usunac node spoza listy")
-            return
-        node = self.head
-        while node != after:
-            node = node.next
-        node = node.next
-        after.next = node.next
-
     def pop(self):
-        node = self.head
-        self.head = node.next
-        return node
+        if self.head != None:
+            node = self.head
+            self.head = node.next
+            return node
+        else:
+            raise ValueError("lista jest pusta")
 
     def remove_last(self):
         node = self.head
-        for x in range(self.length() - 2):
-            node = node.next
-        node2 = node.next
+        if self.head == None:
+            raise ValueError("lista jest pusta")
+        if len(self) == 1:
+            deleted = self.head
+            self.head = None
+            return deleted
+        else:
+            while node.next != self.tail:
+                node = node.next
+        self.tail = node
+        deleted = node.next
         node.next = None
-        return node2
+
+
+        return deleted
+
+    def remove(self, after: Node):
+        node = self.head
+        if len(self) == 1:
+           raise ValueError("lista ma tylko 1 element")
+        if after.next == self.tail:
+            deleted = self.tail
+            self.remove_last()
+        else:
+            while node.next != after:
+                node=node.next
+            deleted = node.next
+            node.next = after.next
+
+        return deleted
 
 class Stack:
     def __init__(self):
-       self.head = None
+       self._storage = LinkedList()
 
-    def len(self):
-        count = 0
-        node = self.head
+    def __len__(self):
+        return len(self._storage)
 
-        while node != None:
-            node = node.next
-            count+=1
+    def __str__(self):
+        strng = ""
 
-        return count
+        for x in range(len(self._storage)):
+            strng+="|"+ str(self._storage.node(x).value)+"|\n"
 
+        return strng
     def push(self, element:Any):
-        node = Node(element)
-        if self.head == None:
-            self.head = node
-        else:
-            node2 = self.head
-            while node2.next != None:
-                node2 = node2.next
+        self._storage.push(element)
 
-            node2.next = node
 
     def pop(self):
-        node = self.head
-        for x in range(self.len() - 2):
-            node = node.next
-        node2 = node.next
-        node.next = None
-        return node2
-
-
-    def print(self):
-
-        node = self.head
-        tab = []
-        while (node != None):
-            tab.append(node.value)
-            node = node.next
-        for x in range((len(tab))):
-            print("|",tab[-x-1],"|\n")
-        return
+        if len(self._storage) != 0:
+            return self._storage.pop().value
+        else:
+            raise ValueError("Stos jest pusty")
 
 class Queue:
     def __init__(self):
-        self.head = None
+        self._storage = LinkedList()
+
+    def __len__(self):
+        return len(self._storage)
+
+    def __str__(self):
+        strng = ""
+
+        for x in range(len(self._storage)):
+            strng += str(self._storage.node(x).value)+" "
+
+        return strng
 
     def peek(self):
-
-        return self.head
+        if len(self._storage) != 0:
+            return self._storage.tail.value
+        else:
+            raise ValueError("Kolejka jest pusta")
 
     def enqueue(self, element:Any):
-        node = Node(element)
-        if self.head == None:
-            self.head = node
-        else:
-            node2 = self.head
-            while node2.next != None:
-                node2 = node2.next
-            node2.next = node
+        self._storage.push(element)
+
     def dequeue(self):
-        node = self.head
-        self.head = node.next
-        return node
-    def print(self):
-        node = self.head
-        while node != None:
-            print(node.value, end=' ')
-            node = node.next
-    def len(self):
-        count = 0
-        node = self.head
-
-        while node != None:
-            node = node.next
-            count+=1
-
-        return count
-
-
-
-# stack = Stack()
-#
-# stack.push(1)
-# stack.push(2)
-# stack.push(3)
-# stack.push(4)
-# stack.push(5)
-#
-#
-# stack.print()
-# print(stack.pop().value,"\n")
-# print(stack.len())
+        if len(self._storage) != 0:
+            return self._storage.remove_last().value
+        else:
+            raise ValueError("Kolejka jest pusta")
 
 
 
@@ -188,29 +178,5 @@ class Queue:
 
 
 
-# list_ = LinkedList()
-# node = Node(3)
-# list_.head == None
-# list_.add(4)
-# list_.add(3)
-# list_.add(2)
-# list_.add(1)
-# list_.append(5)
-# list_.insert(666, list_.node(3))
-# list_.pop()
-# print(list_.remove_last().value)
-# list_.remove(list_.node(0))
-# list_.travel()
-queue = Queue()
-queue.enqueue("Andrzej")
-queue.enqueue("Bartek")
-queue.enqueue("Cecyl")
-queue.enqueue("Dariusz")
-queue.enqueue("Eugeniusz")
-queue.enqueue("Fryderyk")
-print(queue.len())
-print(queue.peek().value)
-queue.dequeue()
-print(queue.peek().value)
-print(queue.len())
-queue.print()
+
+
