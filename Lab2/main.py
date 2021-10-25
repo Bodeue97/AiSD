@@ -92,15 +92,18 @@ class LinkedList:
             deleted = self.head
             self.head = None
             return deleted
-        else:
-            while node.next != self.tail:
-                node = node.next
-        self.tail = node
-        deleted = node.next
-        node.next = None
-
-
-        return deleted
+        if len(self) == 2:
+            deleted = self.tail
+            self.tail = self.head
+            self.head.next = None
+            return deleted
+        if len(self) > 2:
+            node = self.node(len(self)-3)
+            self.tail = node
+            node = node.next
+            deleted = node.next
+            node.next = None
+            return deleted
 
     def remove(self, after: Node):
         node = self.head
