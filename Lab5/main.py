@@ -1,3 +1,4 @@
+from collections import deque
 from typing import Any
 
 
@@ -37,24 +38,24 @@ class BinaryNode:
     def traverse_in_order(self):
 
         if self.left_child:
-            type(self).traverse_in_order(self.left_child)
+            BinaryNode.traverse_in_order(self.left_child)
         print(self.value)
         if self.right_child:
-            type(self).traverse_in_order(self.right_child)
+            BinaryNode.traverse_in_order(self.right_child)
 
     def traverse_post_order(self):
         if self.left_child:
-            type(self).traverse_post_order(self.left_child)
+            BinaryNode.traverse_post_order(self.left_child)
         if self.right_child:
-            type(self).traverse_post_order(self.right_child)
+            BinaryNode.traverse_post_order(self.right_child)
         print(self.value)
 
     def traverse_pre_order(self):
         print(self.value)
         if self.left_child:
-            type(self).traverse_pre_order(self.left_child)
+            BinaryNode.traverse_pre_order(self.left_child)
         if self.right_child:
-            type(self).traverse_pre_order(self.right_child)
+            BinaryNode.traverse_pre_order(self.right_child)
 
 class BinaryTree:
     def __init__(self, root: BinaryNode):
@@ -128,6 +129,43 @@ class BinaryTree:
 
 
 
+def all_paths(tree:BinaryTree):
+    root = tree.root
+    result = [[]]
+    pathtemp = []
+    stack = deque()
+    stack.append((root, pathtemp))
+    if root == None:
+        raise ValueError("root nie moze byc None")
+
+    while stack:
+        node, pathtemp = stack.pop()
+        pathtemp.append(node)
+        if node.is_leaf():
+            result.append(list(pathtemp))
+        if node.left_child:
+            stack.append((node.left_child, list(pathtemp)))
+        if node.right_child:
+            stack.append((node.right_child, list(pathtemp)))
+    return result
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 bn = BinaryNode(10)
 
@@ -145,10 +183,23 @@ bn.left_child.right_child.add_right_child(7)
 
 bn.right_child.left_child.add_right_child(8)
 bn.right_child.right_child.add_left_child(0)
+bn.right_child.right_child.add_right_child(12)
+
+bn.right_child.right_child.right_child.add_left_child(13)
+bn.right_child.right_child.right_child.add_right_child(14)
 
 
-# bn.traverse_pre_order()
+
 bt = BinaryTree(bn)
-# bt.traverse_pre_order()
 bt.show()
+lista = all_paths(bt)
+strng = ""
+for x in lista:
+    print("\n")
+    for y in x:
+        strng+="[" + str(y.value)+"]"
+    print(strng)
+    strng = ""
+
+
 
