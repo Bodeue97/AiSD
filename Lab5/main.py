@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Any
+from typing import Any, Callable
 
 
 class BinaryNode:
@@ -35,96 +35,93 @@ class BinaryNode:
         self.right_child = BinaryNode(value)
         self.right_child.parent = self
 
-    def traverse_in_order(self):
+    def traverse_in_order(self, visit:Callable[['Any'], None]):
 
         if self.left_child:
-            BinaryNode.traverse_in_order(self.left_child)
-        print(self.value)
+            self.left_child.traverse_in_order(visit)
+        visit(self)
         if self.right_child:
-            BinaryNode.traverse_in_order(self.right_child)
+            self.right_child.traverse_in_order(visit)
 
-    def traverse_post_order(self):
+    def traverse_post_order(self, visit:Callable[['Any'], None]):
         if self.left_child:
-            BinaryNode.traverse_post_order(self.left_child)
+            self.left_child.traverse_post_order(visit)
         if self.right_child:
-            BinaryNode.traverse_post_order(self.right_child)
-        print(self.value)
+            self.right_child.traverse_post_order(visit)
+        visit(self)
 
-    def traverse_pre_order(self):
-        print(self.value)
+    def traverse_pre_order(self, visit:Callable[['Any'], None]):
+        visit(self)
         if self.left_child:
-            BinaryNode.traverse_pre_order(self.left_child)
+            self.left_child.traverse_pre_order(visit)
         if self.right_child:
-            BinaryNode.traverse_pre_order(self.right_child)
+            self.right_child.traverse_pre_order(visit)
 
 class BinaryTree:
     def __init__(self, root: BinaryNode):
         self.root = root
 
-    def traverse_in_order(self):
+    def traverse_in_order(self, visit:Callable[['Any'], None]):
         if type(self) is BinaryTree:
             if self.root.left_child:
-                BinaryTree.traverse_in_order(self.root.left_child)
-            print(self.root.value)
+                self.root.left_child.traverse_in_order(visit)
+            visit(self.root)
             if self.root.right_child:
-                BinaryTree.traverse_in_order(self.root.right_child)
+                self.root.right_child.traverse_in_order(visit)
         if type(self) is BinaryNode:
             if self.left_child:
-                BinaryTree.traverse_in_order(self.left_child)
-            print(self.value)
+                self.left_child.traverse_in_order(visit)
+            visit(self)
             if self.right_child:
-                BinaryTree.traverse_in_order(self.right_child)
+                self.right_child.traverse_in_order(visit)
 
-    def traverse_post_order(self):
+    def traverse_post_order(self, visit:Callable[['Any'], None]):
         if type(self) is BinaryTree:
             if self.root.left_child:
-                BinaryTree.traverse_post_order(self.root.left_child)
-
+                self.root.left_child.traverse_post_order(visit)
             if self.root.right_child:
-                BinaryTree.traverse_post_order(self.root.right_child)
-            print(self.root.value)
+               self.root.right_child.traverse_post_order(visit)
+            visit(self.root)
         if type(self) is BinaryNode:
             if self.left_child:
-                BinaryTree.traverse_post_order(self.left_child)
-
+                self.left_child.traverse_post_order(visit)
             if self.right_child:
-                BinaryTree.traverse_post_order(self.right_child)
-            print(self.value)
+                self.right_child.traverse_post_order(visit)
+            visit(self)
 
-    def traverse_pre_order(self):
+    def traverse_pre_order(self, visit:Callable[['Any'], None]):
         if type(self) is BinaryTree:
-            print(self.root.value)
+            visit(self.root)
             if self.root.left_child:
-                BinaryTree.traverse_pre_order(self.root.left_child)
-
+                self.root.left_child.traverse_pre_order(visit)
             if self.root.right_child:
-                BinaryTree.traverse_pre_order(self.root.right_child)
-
+                self.root.right_child.traverse_pre_order(visit)
         if type(self) is BinaryNode:
-            print(self.value)
+            visit(self)
             if self.left_child:
-                BinaryTree.traverse_pre_order(self.left_child)
-
+                self.left_child.traverse_pre_order(visit)
             if self.right_child:
-                BinaryTree.traverse_pre_order(self.right_child)
+                self.right_child.traverse_pre_order(visit)
 
 
 
     def show(self):
         spacer = " |===|"
         if type(self) is BinaryTree:
-            if self.root.right_child:
-                BinaryTree.show(self.root.right_child)
-            print("|"+str(self.root.value)+"|")
             if self.root.left_child:
                 BinaryTree.show(self.root.left_child)
+            print("|"+str(self.root.value)+"|")
+            if self.root.right_child:
+                BinaryTree.show(self.root.right_child)
         if type(self) is BinaryNode:
-            if self.right_child:
-                BinaryTree.show(self.right_child)
-
-            print("  " + spacer*self.level_of()+str(self.value)+"|")
             if self.left_child:
                 BinaryTree.show(self.left_child)
+
+            print("  " + spacer*self.level_of()+str(self.value)+"|")
+            if self.right_child:
+                BinaryTree.show(self.right_child)
+def visit(node:BinaryNode):
+    print(node.value)
 
 
 
@@ -132,21 +129,21 @@ class BinaryTree:
 def all_paths(tree:BinaryTree):
     root = tree.root
     result = [[]]
-    pathtemp = []
+    path = []
     stack = deque()
-    stack.append((root, pathtemp))
+    stack.append((root, path))
     if root == None:
         raise ValueError("root nie moze byc None")
 
     while stack:
-        node, pathtemp = stack.pop()
-        pathtemp.append(node)
+        node, path = stack.pop()
+        path.append(node)
         if node.is_leaf():
-            result.append(list(pathtemp))
+            result.append(list(path))
         if node.left_child:
-            stack.append((node.left_child, list(pathtemp)))
+            stack.append((node.left_child, list(path)))
         if node.right_child:
-            stack.append((node.right_child, list(pathtemp)))
+            stack.append((node.right_child, list(path)))
     return result
 
 
@@ -191,6 +188,11 @@ bn.right_child.right_child.right_child.add_right_child(14)
 
 
 bt = BinaryTree(bn)
+# bn.traverse_post_order(visit)
+# print("")
+# bt.traverse_post_order(visit)
+
+
 bt.show()
 lista = all_paths(bt)
 strng = ""
@@ -200,6 +202,3 @@ for x in lista:
         strng+="[" + str(y.value)+"]"
     print(strng)
     strng = ""
-
-
-
