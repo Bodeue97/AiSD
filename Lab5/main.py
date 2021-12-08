@@ -1,4 +1,4 @@
-from collections import deque
+
 from typing import Any, Callable
 
 
@@ -94,24 +94,28 @@ def visit(node:BinaryNode):
 
 
 def all_paths(tree:BinaryTree):
+
     root = tree.root
-    result = [[]]
+    paths = [[]]
     path = []
-    stack = deque()
-    stack.append((root, path))
+    # przechodzenie deep_first
+    queue = []
+    queue.append((root, path))
     if root == None:
         raise ValueError("root nie moze byc None")
 
-    while stack:
-        node, path = stack.pop()
+    while queue:
+        node, path = queue[-1]
+        del queue[-1]
         path.append(node)
         if node.is_leaf():
-            result.append(list(path))
-        if node.left_child:
-            stack.append((node.left_child, list(path)))
+            paths.append(list(path))
         if node.right_child:
-            stack.append((node.right_child, list(path)))
-    return result
+            queue.append((node.right_child, list(path)))
+        if node.left_child:
+            queue.append((node.left_child, list(path)))
+
+    return paths
 
 
 
@@ -162,22 +166,16 @@ bn.right_child.right_child.right_child.add_right_child(14)
 
 
 bt = BinaryTree(bn)
-# bn.traverse_post_order(visit)
-# print("")
-# bt.traverse_post_order(visit)
-
-bt.traverse_in_order(visit)
-# bt.show()
-# lista = all_paths(bt)
-# strng = ""
-# for x in lista:
-#     print("\n")
-#     for y in x:
-#         strng+="[" + str(y.value)+"]"
-#     print(strng)
-#     strng = ""
 
 
-# node = closest_parent(bt,bn.right_child.right_child.right_child, bt.root.left_child)
+bt.show()
+lista = all_paths(bt)
+strng = ""
+for x in lista:
+    print("\n")
+    for y in x:
+        strng+="[" + str(y.value)+"]"
+    print(strng)
+    strng = ""
 
-# print(node)
+
