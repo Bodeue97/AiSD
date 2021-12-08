@@ -62,46 +62,13 @@ class BinaryTree:
         self.root = root
 
     def traverse_in_order(self, visit:Callable[['Any'], None]):
-        if type(self) is BinaryTree:
-            if self.root.left_child:
-                self.root.left_child.traverse_in_order(visit)
-            visit(self.root)
-            if self.root.right_child:
-                self.root.right_child.traverse_in_order(visit)
-        if type(self) is BinaryNode:
-            if self.left_child:
-                self.left_child.traverse_in_order(visit)
-            visit(self)
-            if self.right_child:
-                self.right_child.traverse_in_order(visit)
+        self.root.traverse_in_order(visit)
 
     def traverse_post_order(self, visit:Callable[['Any'], None]):
-        if type(self) is BinaryTree:
-            if self.root.left_child:
-                self.root.left_child.traverse_post_order(visit)
-            if self.root.right_child:
-               self.root.right_child.traverse_post_order(visit)
-            visit(self.root)
-        if type(self) is BinaryNode:
-            if self.left_child:
-                self.left_child.traverse_post_order(visit)
-            if self.right_child:
-                self.right_child.traverse_post_order(visit)
-            visit(self)
+        self.root.traverse_post_order(visit)
 
     def traverse_pre_order(self, visit:Callable[['Any'], None]):
-        if type(self) is BinaryTree:
-            visit(self.root)
-            if self.root.left_child:
-                self.root.left_child.traverse_pre_order(visit)
-            if self.root.right_child:
-                self.root.right_child.traverse_pre_order(visit)
-        if type(self) is BinaryNode:
-            visit(self)
-            if self.left_child:
-                self.left_child.traverse_pre_order(visit)
-            if self.right_child:
-                self.right_child.traverse_pre_order(visit)
+        self.root.traverse_pre_order(visit)
 
 
 
@@ -164,6 +131,13 @@ def all_paths(tree:BinaryTree):
 
 
 
+
+
+
+
+
+
+
 bn = BinaryNode(10)
 
 bn.add_left_child(9)
@@ -192,13 +166,18 @@ bt = BinaryTree(bn)
 # print("")
 # bt.traverse_post_order(visit)
 
+bt.traverse_in_order(visit)
+# bt.show()
+# lista = all_paths(bt)
+# strng = ""
+# for x in lista:
+#     print("\n")
+#     for y in x:
+#         strng+="[" + str(y.value)+"]"
+#     print(strng)
+#     strng = ""
 
-bt.show()
-lista = all_paths(bt)
-strng = ""
-for x in lista:
-    print("\n")
-    for y in x:
-        strng+="[" + str(y.value)+"]"
-    print(strng)
-    strng = ""
+
+# node = closest_parent(bt,bn.right_child.right_child.right_child, bt.root.left_child)
+
+# print(node)
